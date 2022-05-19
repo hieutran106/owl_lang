@@ -1,7 +1,48 @@
 from enum import Enum, auto
 
+
 class TokenType(Enum):
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
-    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+    LEFT_BRACE = auto()
+    RIGHT_BRACE = auto()
+    COMMA = auto()
+    DOT = auto()
+    MINUS = auto()
+    PLUS = auto()
+    SEMICOLON = auto()
+    SLASH = auto()
+    STAR = auto()
+
+    BANG = auto()
+    BANG_EQUAL = auto()
+    EQUAL = auto()
+    EQUAL_EQUAL = auto()
+    GREATER = auto()
+    GREATER_EQUAL = auto()
+    LESS = auto()
+    LESS_EQUAL = auto()
+
+    IDENTIFIER = auto()
+    STRING = auto()
+    NUMBER = auto()
+
+    AND = auto()
+    CLASS = auto()
+    ELSE = auto()
+    FALSE = auto()
+    FUN = auto()
+    FOR = auto()
+    IF = auto()
+    NIL = auto()
+    OR = auto()
+
+    PRINT = auto()
+    RETURN = auto()
+    SUPER = auto()
+    THIS = auto()
+    TRUE = auto()
+    VAR = auto()
+    WHILE = auto()
+
+    EOF = auto()

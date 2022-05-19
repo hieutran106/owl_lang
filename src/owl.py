@@ -17,7 +17,6 @@ class OwlLang:
 
             self.run(line)
 
-
     def main(self, argv):
         n = len(argv) - 1
         if n > 1:
@@ -26,7 +25,6 @@ class OwlLang:
             self.runFile(sys.argv[1])
         else:
             self.runPrompt()
-
 
     def run(self, source: str):
         scanner = Scanner(source)
@@ -41,7 +39,6 @@ class OwlLang:
     def report(line: int, where: str, message: str):
         print(f"[line {line}] Error ${where}: {message}")
         had_error = True
-
 
 
 if __name__ == "__main__":
