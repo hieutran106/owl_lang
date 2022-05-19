@@ -1,6 +1,5 @@
 import sys
 
-
 class OwlLang:
     had_error = False
 

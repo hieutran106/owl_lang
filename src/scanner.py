@@ -54,11 +54,11 @@ class Scanner:
             "while": TokenType.WHILE
         }
 
-    def scan_tokens(self) -> List[str]:
-        while self.is_at_end():
+    def scan_tokens(self) -> List[Token]:
+        while not self.is_at_end():
             # we are at the beginning of the next lexeme
             self.start = self.current
-            self.scanToken()
+            self.scan_token()
 
         eof_token = Token(TokenType.EOF, "", None, self.line)
         self.tokens.append(eof_token)
@@ -128,7 +128,7 @@ class Scanner:
             while self.peek().isdigit():
                 self.advance()
 
-        value = float(self.source[self.start, self.current])
+        value = float(self.source[self.start:self.current])
         self.add_token(TokenType.NUMBER, value)
 
     def add_token(self, token_type: TokenType, literal):
