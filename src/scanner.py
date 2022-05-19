@@ -1,7 +1,7 @@
 from typing import List, Dict
-from owl_token import Token
-from token_type import TokenType
-from owl import OwlLang
+from .owl_token import Token
+from .token_type import TokenType
+from .owl import OwlLang
 
 
 class Scanner:
