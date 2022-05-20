@@ -2,7 +2,6 @@ from __future__ import annotations
 import unittest
 from src.scanner import Scanner
 from src.parser import Parser
-from rich import print
 from src.token_type import TokenType
 
 
@@ -18,7 +17,7 @@ class TestParser(unittest.TestCase):
         self.assertEqual(expr.left.value, 3)
         self.assertEqual(expr.operator.type, TokenType.PLUS)
 
-    def test_case2(self):
+    def test_error_expect_expression(self):
         source = """
                 3 +
                 """
@@ -26,6 +25,20 @@ class TestParser(unittest.TestCase):
         tokens = scanner.scan_tokens()
         parser = Parser(tokens)
         expr = parser.parse()
+        self.assertEqual(parser.parse_errors[0].message, "Expect expression.")
+        self.assertEqual(parser.parse_errors[0].token.type, TokenType.EOF)
+
+    def test_error_grouping(self):
+        source = """
+                (3+4
+                """
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        parser = Parser(tokens)
+        expr = parser.parse()
+        self.assertEqual(parser.parse_errors[0].message, "Expect ')' after expression.")
+        self.assertEqual(parser.parse_errors[0].token.type, TokenType.EOF)
+
 
 
 if __name__ == "__main__":

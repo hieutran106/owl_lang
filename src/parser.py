@@ -1,18 +1,20 @@
 from typing import List
+from .error_message import OwlErrorMessage
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary
 from .token_type import TokenType
 from .owl_token import Token
 from .parse_error import ParseError
-from .owl import OwlLang
-
+from rich import print
 
 class Parser:
     tokens: List[Token]
     current: int
+    parse_errors: List[OwlErrorMessage]
 
     def __init__(self, tokens: List[Token]):
         self.tokens = tokens
         self.current = 0
+        self.parse_errors = []
 
     def parse(self) -> Expr:
         try:
@@ -86,8 +88,37 @@ class Parser:
         raise self.error(self.peek(), message)
 
     def error(self, token: Token, message: str) -> ParseError:
-        OwlLang.error2(token, message)
+        # OwlLang.error2(token, message)
+        error_message = OwlErrorMessage(token, message)
+        self.parse_errors.append(error_message)
+        print(error_message)
         return ParseError(message)
+
+    def synchronize(self):
+        """
+        Discard tokens until we reach the beginning of the next token
+        :return:
+        """
+        self.advance()
+        while not self.is_at_end():
+            # end expression statement
+            if self.previous().type == TokenType.SEMICOLON:
+                return
+            keywords = [
+                TokenType.CLASS,
+                TokenType.FUN,
+                TokenType.VAR,
+                TokenType.FOR,
+                TokenType.IF,
+                TokenType.WHILE,
+                TokenType.PRINT,
+                TokenType.RETURN
+            ]
+            if self.peek().type in keywords:
+                return
+            # otherwise advance
+            self.advance()
+
 
     def match(self, *token_types: TokenType):
         for type in token_types:
