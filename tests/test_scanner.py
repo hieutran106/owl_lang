@@ -5,7 +5,7 @@ from src.token_type import TokenType
 
 class TestScanner(unittest.TestCase):
 
-    def test_case1(self):
+    def test_operators(self):
         source = "+-*/(){},.;"
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
@@ -23,7 +23,7 @@ class TestScanner(unittest.TestCase):
         last = tokens[-2]
         self.assertEqual(last.type, TokenType.RIGHT_BRACE)
 
-    def test_case3(self):
+    def test_string_literal(self):
         source = """
         var x = "hello world"
         """
@@ -32,7 +32,7 @@ class TestScanner(unittest.TestCase):
         last = tokens[-2]
         self.assertEqual(last.type, TokenType.STRING)
 
-    def test_case4(self):
+    def test_operators_2(self):
         source = """
         >= <= != ==
         """
@@ -44,7 +44,7 @@ class TestScanner(unittest.TestCase):
         self.assertEqual(tokens[2].type, TokenType.BANG_EQUAL)
         self.assertEqual(tokens[3].type, TokenType.EQUAL_EQUAL)
 
-    def test_case5(self):
+    def test_number_literal(self):
         source = """
         // this is a comment
         3.14
@@ -55,7 +55,7 @@ class TestScanner(unittest.TestCase):
         self.assertEqual(tokens[0].type, TokenType.NUMBER)
         self.assertEqual(tokens[0].literal, 3.14)
 
-    def test_case6(self):
+    def test_keywords(self):
         source = """
         and or if else class print nil
         """

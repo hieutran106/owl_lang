@@ -1,4 +1,10 @@
+from __future__ import annotations
 import sys
+
+from token_type import TokenType
+from .owl_token import Token
+
+
 
 class OwlLang:
     had_error = False
@@ -26,6 +32,7 @@ class OwlLang:
             self.runPrompt()
 
     def run(self, source: str):
+        from .scanner import Scanner
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
         print(tokens)
@@ -33,6 +40,13 @@ class OwlLang:
     @staticmethod
     def error(line: int, message: str):
         OwlLang.report(line, "", message)
+
+    @staticmethod
+    def error2(token: Token, message: str):
+        if token.type == TokenType.EOF:
+            OwlLang.report(token.line, " at end", message)
+        else:
+            OwlLang.report(token.line, f" at '{token.lexeme}'", message)
 
     @staticmethod
     def report(line: int, where: str, message: str):

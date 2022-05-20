@@ -2,6 +2,8 @@ from typing import List
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary
 from .token_type import TokenType
 from .owl_token import Token
+from .parse_error import ParseError
+from .owl import OwlLang
 
 
 class Parser:
@@ -11,6 +13,13 @@ class Parser:
     def __init__(self, tokens: List[Token]):
         self.tokens = tokens
         self.current = 0
+
+    def parse(self) -> Expr:
+        try:
+            expr = self.expression()
+            return expr
+        except ParseError as parse_error:
+            return None
 
     def expression(self) -> Expr:
         return self.equality()
@@ -69,14 +78,16 @@ class Parser:
             expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return Grouping(expr)
-
+        raise self.error(self.peek(), "Expect expression.")
 
     def consume(self, token_type: TokenType, message: str) -> Token:
         if self.check(token_type):
             return self.advance()
+        raise self.error(self.peek(), message)
 
-
-
+    def error(self, token: Token, message: str) -> ParseError:
+        OwlLang.error2(token, message)
+        return ParseError(message)
 
     def match(self, *token_types: TokenType):
         for type in token_types:
@@ -95,7 +106,6 @@ class Parser:
     def advance(self) -> Token:
         if not self.is_at_end():
             self.current += 1
-
         return self.previous()
 
     def is_at_end(self) -> bool:
