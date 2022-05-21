@@ -12,6 +12,6 @@ class OwlRuntimeError(Exception):
         line = self.token.line
         lexeme = self.token.lexeme
         if self.token.type == TokenType.EOF:
-            return f"[Line {line}] Error at end: {self.message}"
+            return f"[Line {line}] RuntimeError at end: {self.message}"
         else:
-            return f"[Line {line}] Error at '{lexeme}': {self.message}"
+            return f"[Line {line}] RuntimeError at '{lexeme}': {self.message}"

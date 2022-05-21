@@ -28,7 +28,7 @@ def define_ast(base_name: str, types: List[str]):
         node = AstNode(class_name, fields)
         ast_nodes.append(node)
 
-    template = env.get_template("ast.template")
+    template = env.get_template(f"ast_{base_name.lower()}.template")
     ast_source = template.render(base_name=base_name, ast_nodes=ast_nodes)
     path_to = pathlib.Path("../owl_ast", f"{base_name.lower()}.py")
     path_to.write_text(ast_source, encoding="utf-8")
@@ -38,6 +38,12 @@ def define_ast(base_name: str, types: List[str]):
 
 if __name__ == "__main__":
     print("Generate owl_ast")
+    # generate statements
+    define_ast("Stmt", [
+        "Expression : Expr expression",
+        "Print      : Expr expression"
+    ])
+    # generate expressions
     define_ast("Expr", [
         "Binary   : Expr left, Token operator, Expr right",
         "Grouping : Expr expression",
