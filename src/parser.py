@@ -1,7 +1,7 @@
 from typing import List
 
-from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt
-from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary
+from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration
+from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable
 from .token_type import TokenType
 from .owl_token import Token
 
@@ -35,17 +35,40 @@ class Parser:
     def parse(self) -> List[Stmt]:
         statements = []
         while not self.is_at_end():
-            statements.append(self.statement())
+            statements.append(self.declaration())
         return statements
 
-    def statement(self) -> Stmt:
+    def declaration(self) -> Stmt:
         try:
-            if self.match(TokenType.PRINT):
-                return self.print_statement()
-            return self.expression_statement()
+            if self.match(TokenType.VAR):
+                return self.variable_declaration()
+            return self.statement()
         except ParseError as parse_error:
             self.parse_errors.append(parse_error)
+            self.synchronize()
             return None
+
+    def variable_declaration(self) -> Stmt:
+        name = self.consume(TokenType.IDENTIFIER, "Expect variable name.")
+        initializer: Expr = None
+        if self.match(TokenType.EQUAL):
+            initializer = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+        return VarDeclaration(name, initializer)
+
+    def statement(self) -> Stmt:
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+        return self.expression_statement()
+
+    # def statement(self) -> Stmt:
+    #     try:
+    #         if self.match(TokenType.PRINT):
+    #             return self.print_statement()
+    #         return self.expression_statement()
+    #     except ParseError as parse_error:
+    #         self.parse_errors.append(parse_error)
+    #         return None
 
     def print_statement(self) -> Stmt:
         value = self.expression()
@@ -109,6 +132,10 @@ class Parser:
         if self.match(TokenType.NUMBER, TokenType.STRING):
             token = self.previous()
             return Literal(value=token.literal)
+
+        if self.match(TokenType.IDENTIFIER):
+            name = self.previous()
+            return Variable(name)
 
         if self.match(TokenType.LEFT_PAREN):
             expr = self.expression()

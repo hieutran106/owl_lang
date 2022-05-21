@@ -1,3 +1,5 @@
+from .environment import Environment
+from .owl_ast.expr import Variable
 from .owl_ast.expr import Unary, Literal, Grouping, Binary
 from .owl_token import Token
 from .token_type import TokenType
@@ -26,6 +28,12 @@ def check_number_or_string_operands(operator: Token, left, right) -> None:
 
 
 class ExprVisitor(Visitor):
+
+    environment: Environment
+
+    def __init__(self, environment: Environment):
+        self.environment = environment
+
     def visit_binary_expr(self, expr: Binary):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
@@ -89,6 +97,11 @@ class ExprVisitor(Visitor):
             return -right
         # unreachable
         return None
+
+    def visit_variable_expr(self, expr: Variable):
+        name: Token = expr.name
+        return self.environment.get(name)
+
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)

@@ -1,5 +1,6 @@
 import unittest
 
+from src.environment import Environment
 from src.expr_visitor import ExprVisitor
 from src.scanner import Scanner
 from src.parser import Parser
@@ -12,7 +13,8 @@ def evaluate_source(source: str):
     parser = Parser(tokens)
     expr = parser.expression()
 
-    expr_visitor = ExprVisitor()
+    environment = Environment()
+    expr_visitor = ExprVisitor(environment)
     return expr_visitor.evaluate(expr)
 
 
