@@ -1,14 +1,18 @@
+# -*- coding: UTF-8 -*-
 import sys
 from .scanner import Scanner
 from .parser import Parser
 from .interpreter import Interpreter
+from rich import print
 
 
 def runFile(interpreter: Interpreter):
     pass
 
+
 def runPrompt(interpreter: Interpreter):
-    print("The owl programming language (v1.0.0)")
+    print(f"The owl 🦉 programming language (v1.0.0)")
+    print("Inspired by Bob Nystroms's lox and Python.")
     while True:
         line = input("> ")
         if len(line) == 0:
@@ -32,6 +36,7 @@ def run(source: str, interpreter: Interpreter):
     if len(parser.parse_errors) > 0:
         for error in parser.parse_errors:
             print(error)
+        return
 
     interpreter.interpret(expr)
 

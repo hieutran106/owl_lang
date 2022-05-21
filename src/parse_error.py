@@ -1,9 +1,4 @@
-class ParseError(Exception):
-    def __init__(self, message):
-        # Call the base class constructor with the parameters it needs
-        super().__init__(message)
-
-
+from .token_type import TokenType
 
 
 class OwlRuntimeError(Exception):
@@ -11,8 +6,12 @@ class OwlRuntimeError(Exception):
         # Call the base class constructor with the parameters it needs
         super().__init__(message)
         self.token = token
+        self.message = message
 
-
-if __name__ == "__main__":
-    error = ParseError("abcd")
-    print(error)
+    def __str__(self):
+        line = self.token.line
+        lexeme = self.token.lexeme
+        if self.token.type == TokenType.EOF:
+            return f"[Line {line}] Error at end: {self.message}"
+        else:
+            return f"[Line {line}] Error at '{lexeme}': {self.message}"

@@ -5,13 +5,33 @@ from .owl_ast.expr import Visitor, Expr
 from .parse_error import OwlRuntimeError
 
 
+def check_number_operand(operator: Token, operand) -> None:
+    if isinstance(operand, float):
+        return
+    raise OwlRuntimeError(operator, "Operand must be a number.")
+
+
+def check_number_operands(operator: Token, left, right) -> None:
+    if isinstance(left, float) and isinstance(right, float):
+        return
+    raise OwlRuntimeError(operator, "Operands must be numbers.")
+
+
+def check_number_or_string_operands(operator: Token, left, right) -> None:
+    is_number = isinstance(left, float) and isinstance(right, float)
+    is_string = isinstance(left, str) and isinstance(right, str)
+    if is_number or is_string:
+        return
+    raise OwlRuntimeError(operator, "Operands must be numbers or strings.")
+
+
 class ExprVisitor(Visitor):
     def visit_binary_expr(self, expr: Binary):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
         op_type = expr.operator.type
         if op_type == TokenType.MINUS:
-            self.check_number_operands(left, right)
+            check_number_operands(expr.operator, left, right)
             return left - right
         elif op_type == TokenType.PLUS:
             # TODO - check type
@@ -26,26 +46,28 @@ class ExprVisitor(Visitor):
             else:
                 raise OwlRuntimeError(expr.operator, "Cannot perform PLUS operator.")
         elif op_type == TokenType.SLASH:
-            self.check_number_operands(left, right)
+            check_number_operands(expr.operator, left, right)
             return left / right
         elif op_type == TokenType.STAR:
-            self.check_number_operands(left, right)
+            check_number_operands(expr.operator, left, right)
             return left * right
         elif op_type == TokenType.GREATER:
-            self.check_number_operands(left, right)
+            check_number_operands(expr.operator, left, right)
             return left > right
         elif op_type == TokenType.GREATER_EQUAL:
-            self.check_number_operands(left, right)
+            check_number_operands(expr.operator, left, right)
             return left >= right
         elif op_type == TokenType.LESS:
-            self.check_number_operands(left, right)
+            check_number_operands(expr.operator, left, right)
             return left < right
         elif op_type == TokenType.LESS_EQUAL:
-            self.check_number_operands(left, right)
+            check_number_operands(expr.operator, left, right)
             return left <= right
         elif op_type == TokenType.BANG_EQUAL:
+            check_number_or_string_operands(expr.operator, left, right)
             return not self.is_equal(left, right)
         elif op_type == TokenType.EQUAL_EQUAL:
+            check_number_or_string_operands(expr.operator, left, right)
             return self.is_equal(left, right)
 
         # unreachable
@@ -63,7 +85,7 @@ class ExprVisitor(Visitor):
         if op_type == TokenType.BANG:
             return not bool(right)
         elif op_type == TokenType.MINUS:
-            self.check_number_operand(expr.operator, right)
+            check_number_operand(expr.operator, right)
             return -right
         # unreachable
         return None
@@ -73,13 +95,3 @@ class ExprVisitor(Visitor):
 
     def is_equal(self, left, right):
         return left == right
-
-    def check_number_operand(self, operator: Token, operand) -> None:
-        if isinstance(operand, float):
-            return
-        raise OwlRuntimeError(operator, "Operand must be a number.")
-
-    def check_number_operands(self, operator: Token, left, right) -> None:
-        if isinstance(left, float) and isinstance(right, float):
-            return
-        raise OwlRuntimeError(operator, "Operands must be a numbers.")

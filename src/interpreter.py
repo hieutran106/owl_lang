@@ -2,6 +2,7 @@ from typing import List
 
 from .expr_visitor import ExprVisitor, Expr
 from .parse_error import OwlRuntimeError
+from rich import print
 
 
 class Interpreter:
@@ -27,5 +28,7 @@ class Interpreter:
         if isinstance(object, float):
             if text.endswith(".0"):
                 text = text[:-2]
+        elif isinstance(object, bool):
+            text = text.lower()
 
         return text

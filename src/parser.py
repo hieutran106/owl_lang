@@ -1,15 +1,29 @@
 from typing import List
-from .error_message import OwlErrorMessage
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary
 from .token_type import TokenType
 from .owl_token import Token
-from .parse_error import ParseError
-from rich import print
+
+
+class ParseError(Exception):
+    def __init__(self, token: Token, message: str):
+        # Call the base class constructor with the parameters it needs
+        super().__init__(message)
+        self.token = token
+        self.message = message
+
+    def __str__(self):
+        line = self.token.line
+        lexeme = self.token.lexeme
+        if self.token.type == TokenType.EOF:
+            return f"[Line {line}] Error at end: {self.message}"
+        else:
+            return f"[Line {line}] Error at '{lexeme}': {self.message}"
+
 
 class Parser:
     tokens: List[Token]
     current: int
-    parse_errors: List[OwlErrorMessage]
+    parse_errors: List[ParseError]
 
     def __init__(self, tokens: List[Token]):
         self.tokens = tokens
@@ -88,11 +102,9 @@ class Parser:
         raise self.error(self.peek(), message)
 
     def error(self, token: Token, message: str) -> ParseError:
-        # OwlLang.error2(token, message)
-        error_message = OwlErrorMessage(token, message)
-        self.parse_errors.append(error_message)
-        print(error_message)
-        return ParseError(message)
+        error = ParseError(token, message)
+        self.parse_errors.append(error)
+        return error
 
     def synchronize(self):
         """

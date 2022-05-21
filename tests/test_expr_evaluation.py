@@ -32,6 +32,20 @@ class TestExprEvaluation(unittest.TestCase):
         interpreter = interpret_source(source)
         self.assertEqual(len(interpreter.runtime_errors), 0)
 
+    def test_complex_expr(self):
+        source = '2*(3/-3)'
+        interpreter = interpret_source(source)
+        self.assertEqual(len(interpreter.runtime_errors), 0)
+
+    def test_comparison(self):
+        source = '"hello" == "hello"'
+        interpreter = interpret_source(source)
+        self.assertEqual(len(interpreter.runtime_errors), 0)
+
+        source = '"hello" != "hello1"'
+        interpreter = interpret_source(source)
+        self.assertEqual(len(interpreter.runtime_errors), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
