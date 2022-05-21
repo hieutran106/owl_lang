@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from .expr import Expr
-
+from src.owl_token import Token
 
 class {{ base_name }}(ABC):
     @abstractmethod

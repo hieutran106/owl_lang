@@ -24,8 +24,11 @@ def define_ast(base_name: str, types: List[str]):
             field_type, name = field.strip().split(" ")
 
             fields.append((field_type, name))
+        if class_name.lower().endswith("declaration"):
+            method_class_name = class_name.lower().replace("declaration", "") + "_" + "declaration"
+        else:
+            method_class_name = class_name.replace(base_name, "").lower() + "_" + base_name.lower()
 
-        method_class_name = class_name.replace(base_name, "").lower() + "_" + base_name.lower()
         node = AstNode(class_name, fields, method_class_name)
         ast_nodes.append(node)
 
@@ -39,13 +42,15 @@ if __name__ == "__main__":
     print("Generate owl_ast")
     # generate statements
     define_ast("Stmt", [
-        "ExpressionStmt : Expr expression",
-        "PrintStmt      : Expr expression"
+        "ExpressionStmt  : Expr expression",
+        "PrintStmt       : Expr expression",
+        "VarDeclaration  : Token name, Expr initializer"
     ])
     # generate expressions
     define_ast("Expr", [
         "Binary   : Expr left, Token operator, Expr right",
         "Grouping : Expr expression",
         "Literal  : Any value",
-        "Unary    : Token operator, Expr right"
+        "Unary    : Token operator, Expr right",
+        "Variable : Token name"
     ])
