@@ -1,4 +1,6 @@
 from typing import List
+
+from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary
 from .token_type import TokenType
 from .owl_token import Token
@@ -30,12 +32,26 @@ class Parser:
         self.current = 0
         self.parse_errors = []
 
-    def parse(self) -> Expr:
-        try:
-            expr = self.expression()
-            return expr
-        except ParseError as parse_error:
-            return None
+    def parse(self) -> List[Stmt]:
+        statements = []
+        while not self.is_at_end():
+            statements.append(self.statement())
+        return statements
+
+    def statement(self) -> Stmt:
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+        return self.expression_statement()
+
+    def print_statement(self) -> Stmt:
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return PrintStmt(value)
+
+    def expression_statement(self) -> Stmt:
+        expr = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+        return ExpressionStmt(expr)
 
     def expression(self) -> Expr:
         return self.equality()

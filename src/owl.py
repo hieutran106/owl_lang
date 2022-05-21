@@ -31,14 +31,14 @@ def run(source: str, interpreter: Interpreter):
         return
 
     parser = Parser(tokens)
-    expr = parser.parse()
+    statements = parser.parse()
     # terminate if there are any parse error
     if len(parser.parse_errors) > 0:
         for error in parser.parse_errors:
             print(error)
         return
 
-    interpreter.interpret(expr)
+    interpreter.interpret(statements)
 
 
 if __name__ == "__main__":

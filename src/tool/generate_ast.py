@@ -12,7 +12,7 @@ env = Environment(
 class AstNode:
     class_name: str
     fields: List[Tuple[str, str]]
-
+    method_class_name: str
 
 def define_ast(base_name: str, types: List[str]):
     ast_nodes = []
@@ -25,23 +25,22 @@ def define_ast(base_name: str, types: List[str]):
 
             fields.append((field_type, name))
 
-        node = AstNode(class_name, fields)
+        method_class_name = class_name.replace(base_name, "").lower() + "_" + base_name.lower()
+        node = AstNode(class_name, fields, method_class_name)
         ast_nodes.append(node)
 
     template = env.get_template(f"ast_{base_name.lower()}.template")
     ast_source = template.render(base_name=base_name, ast_nodes=ast_nodes)
     path_to = pathlib.Path("../owl_ast", f"{base_name.lower()}.py")
     path_to.write_text(ast_source, encoding="utf-8")
-    # with open(f"{base_name.lower()}.py", "w") as file:
-    #     file.write(ast_source)
 
 
 if __name__ == "__main__":
     print("Generate owl_ast")
     # generate statements
     define_ast("Stmt", [
-        "Expression : Expr expression",
-        "Print      : Expr expression"
+        "ExpressionStmt : Expr expression",
+        "PrintStmt      : Expr expression"
     ])
     # generate expressions
     define_ast("Expr", [
