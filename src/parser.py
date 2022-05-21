@@ -1,7 +1,7 @@
 from typing import List
 
 from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration
-from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable
+from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment
 from .token_type import TokenType
 from .owl_token import Token
 
@@ -61,15 +61,6 @@ class Parser:
             return self.print_statement()
         return self.expression_statement()
 
-    # def statement(self) -> Stmt:
-    #     try:
-    #         if self.match(TokenType.PRINT):
-    #             return self.print_statement()
-    #         return self.expression_statement()
-    #     except ParseError as parse_error:
-    #         self.parse_errors.append(parse_error)
-    #         return None
-
     def print_statement(self) -> Stmt:
         value = self.expression()
         self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
@@ -81,7 +72,21 @@ class Parser:
         return ExpressionStmt(expr)
 
     def expression(self) -> Expr:
-        return self.equality()
+        return self.assignment()
+
+    def assignment(self) -> Expr:
+        expr = self.equality()
+        if self.match(TokenType.EQUAL):
+            equal_token = self.previous()
+            value = self.assignment()
+            if isinstance(expr, Variable):
+                name: Token = expr.name
+                return Assignment(name, value)
+
+            self.error(equal_token, "Invalid assignment target.")
+        return expr
+
+
 
     def equality(self) -> Expr:
         expr = self.comparison()
