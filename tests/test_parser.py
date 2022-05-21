@@ -24,7 +24,7 @@ class TestParser(unittest.TestCase):
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
         parser = Parser(tokens)
-        expr = parser.expression()
+        parser.parse()
         self.assertEqual(parser.parse_errors[0].message, "Expect expression.")
         self.assertEqual(parser.parse_errors[0].token.type, TokenType.EOF)
 
@@ -35,7 +35,7 @@ class TestParser(unittest.TestCase):
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
         parser = Parser(tokens)
-        expr = parser.expression()
+        parser.parse()
         self.assertEqual(parser.parse_errors[0].message, "Expect ')' after expression.")
         self.assertEqual(parser.parse_errors[0].token.type, TokenType.EOF)
 

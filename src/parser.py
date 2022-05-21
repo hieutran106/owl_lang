@@ -39,9 +39,13 @@ class Parser:
         return statements
 
     def statement(self) -> Stmt:
-        if self.match(TokenType.PRINT):
-            return self.print_statement()
-        return self.expression_statement()
+        try:
+            if self.match(TokenType.PRINT):
+                return self.print_statement()
+            return self.expression_statement()
+        except ParseError as parse_error:
+            self.parse_errors.append(parse_error)
+            return None
 
     def print_statement(self) -> Stmt:
         value = self.expression()

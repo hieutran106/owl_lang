@@ -21,6 +21,6 @@ class Interpreter:
         try:
             for stmt in statements:
                 self.stmt_visitor.execute(stmt)
-        except RuntimeError as runtime_error:
+        except OwlRuntimeError as runtime_error:
             self.runtime_errors.append(runtime_error)
             print(runtime_error)
