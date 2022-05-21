@@ -1,7 +1,13 @@
+from dataclasses import dataclass
 from typing import List, Dict
 from .owl_token import Token
 from .token_type import TokenType
-from .owl import OwlLang
+
+
+@dataclass
+class ScanError:
+    line: int
+    message: str
 
 
 class Scanner:
@@ -14,6 +20,8 @@ class Scanner:
     token_map: Dict[str, TokenType]
     keywords: Dict[str, TokenType]
 
+    scan_errors: List[ScanError]
+
     def __init__(self, source: str):
         self.source = source
         self.tokens = []
@@ -21,6 +29,7 @@ class Scanner:
         self.current = 0
         self.line = 0
         self.source_len = len(source)
+        self.scan_errors = []
 
         self.token_map = {
             "(": TokenType.LEFT_PAREN,
@@ -103,7 +112,7 @@ class Scanner:
             elif c.isalpha():
                 self.identifier()
             else:
-                OwlLang.error(self.line, "Unexpected character.")
+                self.scan_errors.append(ScanError(self.line, "Unexpected character."))
 
     def identifier(self):
         while self.peek().isalnum():
@@ -153,7 +162,8 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            OwlLang.error(self.line, "Unterminated string.")
+            self.scan_errors(ScanError(self.line, "Unterminated string."))
+            # OwlLang.error(self.line, "Unterminated string.")
             return
 
         # the closing "
