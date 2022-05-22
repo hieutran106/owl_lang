@@ -13,6 +13,12 @@ class Environment:
         # Bind a new name to a value, aka declaration + initialization
         self.values[name] = value
 
+    def assign(self, name: Token, value: Any):
+        if name.lexeme in self.values:
+            self.values[name.lexeme] = value
+            return
+        raise OwlRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+
     def get(self, name: Token):
         if name.lexeme in self.values:
             return self.values[name.lexeme]

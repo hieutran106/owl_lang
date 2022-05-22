@@ -1,3 +1,4 @@
+from owl_ast.expr import Assignment
 from .environment import Environment
 from .owl_ast.expr import Variable
 from .owl_ast.expr import Unary, Literal, Grouping, Binary
@@ -101,6 +102,11 @@ class ExprVisitor(Visitor):
     def visit_variable_expr(self, expr: Variable):
         name: Token = expr.name
         return self.environment.get(name)
+
+    def visit_assignment_expr(self, expr: Assignment):
+        value = self.evaluate(expr.value)
+        self.environment.assign(expr.name, value)
+        return value
 
 
     def evaluate(self, expr: Expr):
