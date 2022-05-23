@@ -1,7 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, List
+
 if TYPE_CHECKING:
     from .interpreter import Interpreter
+
+from .environment import Environment
 from .owl_ast.stmt import VarDeclaration
 from .expr_visitor import ExprVisitor
 from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt
@@ -43,7 +46,17 @@ class StmtVisitor(Visitor):
         self.interpreter.define_variable(stmt.name.lexeme, init_value)
 
     def visit_block_stmt(self, stmt: BlockStmt) -> None:
-        pass
+        block_environment = Environment(self.interpreter.curr_environment)
+        self.execute_block(stmt.statements, block_environment)
+
+    def execute_block(self, statements: List[Stmt], block_env: Environment):
+        previous = self.interpreter.curr_environment
+        try:
+            self.interpreter.curr_environment = block_env
+            for stmt in statements:
+                self.execute(stmt)
+        finally:
+            self.interpreter.curr_environment = previous
 
     def execute(self, stmt: Stmt):
         stmt.accept(self)
