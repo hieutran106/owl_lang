@@ -1,6 +1,7 @@
-from typing import Any
-
-from .environment import Environment
+from __future__ import annotations
+from typing import TYPE_CHECKING, Any
+if TYPE_CHECKING:
+    from .interpreter import Interpreter
 from .owl_ast.stmt import VarDeclaration
 from .expr_visitor import ExprVisitor
 from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt
@@ -20,12 +21,12 @@ def stringify(value: Any) -> str:
 
 
 class StmtVisitor(Visitor):
-    environment: Environment
+    interpreter: Interpreter
     expr_visitor: ExprVisitor
 
-    def __init__(self, expr_visitor: ExprVisitor, environment: Environment):
+    def __init__(self, expr_visitor: ExprVisitor, interpreter: Interpreter):
         self.expr_visitor = expr_visitor
-        self.environment = environment
+        self.interpreter = interpreter
 
     def visit_expression_stmt(self, stmt: ExpressionStmt) -> None:
         self.expr_visitor.evaluate(stmt.expression)
@@ -39,7 +40,7 @@ class StmtVisitor(Visitor):
         if stmt.initializer:
             init_value = self.expr_visitor.evaluate(stmt.initializer)
         # define variable in the environment
-        self.environment.define(stmt.name.lexeme, init_value)
+        self.interpreter.define_variable(stmt.name.lexeme, init_value)
 
     def visit_block_stmt(self, stmt: BlockStmt) -> None:
         pass

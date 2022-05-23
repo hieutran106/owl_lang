@@ -1,5 +1,5 @@
+from __future__ import annotations
 from typing import List
-
 from src.owl_ast.stmt import Stmt
 from src.scanner import Scanner
 from src.parser import Parser

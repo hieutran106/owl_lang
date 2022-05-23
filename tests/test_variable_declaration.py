@@ -10,7 +10,7 @@ class TestVariableDeclaration(unittest.TestCase):
         var c = a + b;
         """
         interpreter = interpret_source(source)
-        env_values = interpreter.environment.values
+        env_values = interpreter.curr_environment.values
         self.assertEqual(env_values['a'], 1)
         self.assertEqual(env_values['b'], 2)
         self.assertEqual(env_values['c'], 3)
@@ -27,7 +27,7 @@ class TestVariableDeclaration(unittest.TestCase):
         a = 2;
         """
         interpreter = interpret_source(source)
-        env_values = interpreter.environment.values
+        env_values = interpreter.curr_environment.values
         self.assertEqual(env_values['a'], 2)
 
     def test_assignment_error(self):
@@ -35,6 +35,6 @@ class TestVariableDeclaration(unittest.TestCase):
         a = 2;
         """
         interpreter = interpret_source(source)
-        env_values = interpreter.environment.values
+        env_values = interpreter.curr_environment.values
         self.assertRaises(KeyError, lambda: env_values['a'])
         self.assertEqual(interpreter.runtime_errors[0].message, "Undefined variable 'a'.")

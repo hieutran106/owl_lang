@@ -1,5 +1,9 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .interpreter import Interpreter
+
 from .owl_ast.expr import Assignment
-from .environment import Environment
 from .owl_ast.expr import Variable
 from .owl_ast.expr import Unary, Literal, Grouping, Binary
 from .owl_token import Token
@@ -29,11 +33,10 @@ def check_number_or_string_operands(operator: Token, left, right) -> None:
 
 
 class ExprVisitor(Visitor):
+    interpreter: Interpreter
 
-    environment: Environment
-
-    def __init__(self, environment: Environment):
-        self.environment = environment
+    def __init__(self, interpreter: Interpreter):
+        self.interpreter = interpreter
 
     def visit_binary_expr(self, expr: Binary):
         left = self.evaluate(expr.left)
@@ -101,13 +104,12 @@ class ExprVisitor(Visitor):
 
     def visit_variable_expr(self, expr: Variable):
         name: Token = expr.name
-        return self.environment.get(name)
+        return self.interpreter.get_variable(name)
 
     def visit_assignment_expr(self, expr: Assignment):
         value = self.evaluate(expr.value)
-        self.environment.assign(expr.name, value)
+        self.interpreter.assign_variable(expr.name, value)
         return value
-
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)
