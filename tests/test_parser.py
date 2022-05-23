@@ -1,9 +1,11 @@
 from __future__ import annotations
 import unittest
+
+from src.owl_ast.stmt import BlockStmt
 from src.scanner import Scanner
 from src.parser import Parser
 from src.token_type import TokenType
-
+from .test_utils import parse_source
 
 class TestParser(unittest.TestCase):
     def test_case1(self):
@@ -38,6 +40,16 @@ class TestParser(unittest.TestCase):
         parser.parse()
         self.assertEqual(parser.parse_errors[0].message, "Expect ')' after expression.")
         self.assertEqual(parser.parse_errors[0].token.type, TokenType.EOF)
+
+    def test_parse_block(self):
+        source = """
+        {
+            var a = 1;
+            var b = 2;
+        }
+        """
+        statements, _ = parse_source(source)
+        self.assertIsInstance(statements[0], BlockStmt)
 
 
 

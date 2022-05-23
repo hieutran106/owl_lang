@@ -3,11 +3,20 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from .expr import Expr
 from src.owl_token import Token
+from typing import List
 
 class Stmt(ABC):
     @abstractmethod
     def accept(self, visitor: Visitor):
         pass
+
+
+@dataclass
+class BlockStmt(Stmt):
+    statements: List[Stmt]
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_block_stmt(self)
 
 
 @dataclass
@@ -36,6 +45,10 @@ class VarDeclaration(Stmt):
 
 
 class Visitor(ABC):
+    
+    @abstractmethod
+    def visit_block_stmt(self, stmt: BlockStmt) -> None:
+        pass
     
     @abstractmethod
     def visit_expression_stmt(self, stmt: ExpressionStmt) -> None:

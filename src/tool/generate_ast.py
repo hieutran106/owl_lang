@@ -42,6 +42,7 @@ if __name__ == "__main__":
     print("Generate owl_ast")
     # generate statements
     define_ast("Stmt", [
+        "BlockStmt       : List[Stmt] statements",
         "ExpressionStmt  : Expr expression",
         "PrintStmt       : Expr expression",
         "VarDeclaration  : Token name, Expr initializer"

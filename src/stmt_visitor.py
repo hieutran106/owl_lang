@@ -3,7 +3,7 @@ from typing import Any
 from .environment import Environment
 from .owl_ast.stmt import VarDeclaration
 from .expr_visitor import ExprVisitor
-from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt
+from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt
 
 
 def stringify(value: Any) -> str:
@@ -40,6 +40,9 @@ class StmtVisitor(Visitor):
             init_value = self.expr_visitor.evaluate(stmt.initializer)
         # define variable in the environment
         self.environment.define(stmt.name.lexeme, init_value)
+
+    def visit_block_stmt(self, stmt: BlockStmt) -> None:
+        pass
 
     def execute(self, stmt: Stmt):
         stmt.accept(self)

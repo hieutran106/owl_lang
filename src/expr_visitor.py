@@ -1,4 +1,4 @@
-from owl_ast.expr import Assignment
+from .owl_ast.expr import Assignment
 from .environment import Environment
 from .owl_ast.expr import Variable
 from .owl_ast.expr import Unary, Literal, Grouping, Binary
