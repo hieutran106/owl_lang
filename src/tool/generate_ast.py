@@ -44,6 +44,7 @@ if __name__ == "__main__":
     define_ast("Stmt", [
         "BlockStmt       : List[Stmt] statements",
         "ExpressionStmt  : Expr expression",
+        "IfStmt          : Expr condition, Stmt then_branch, Stmt else_branch",
         "PrintStmt       : Expr expression",
         "VarDeclaration  : Token name, Expr initializer"
     ])

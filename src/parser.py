@@ -1,6 +1,6 @@
 from typing import List
 
-from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt
+from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment
 from .token_type import TokenType
 from .owl_token import Token
@@ -62,7 +62,20 @@ class Parser:
         if self.match(TokenType.LEFT_BRACE):
             statements = self.block_statement()
             return BlockStmt(statements)
+        if self.match(TokenType.IF):
+            return self.if_statement()
         return self.expression_statement()
+
+    def if_statement(self):
+        self.consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.")
+        condition = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.")
+        then_branch = self.statement()
+        else_branch = None
+        if self.match(TokenType.ELSE):
+            else_branch = self.statement()
+        return IfStmt(condition, then_branch, else_branch)
+
 
     def block_statement(self):
         statements = []

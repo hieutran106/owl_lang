@@ -5,6 +5,7 @@ from .expr import Expr
 from src.owl_token import Token
 from typing import List
 
+
 class Stmt(ABC):
     @abstractmethod
     def accept(self, visitor: Visitor):
@@ -25,6 +26,16 @@ class ExpressionStmt(Stmt):
     
     def accept(self, visitor: Visitor):
         return visitor.visit_expression_stmt(self)
+
+
+@dataclass
+class IfStmt(Stmt):
+    condition: Expr
+    then_branch: Stmt
+    else_branch: Stmt
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_if_stmt(self)
 
 
 @dataclass
@@ -52,6 +63,10 @@ class Visitor(ABC):
     
     @abstractmethod
     def visit_expression_stmt(self, stmt: ExpressionStmt) -> None:
+        pass
+    
+    @abstractmethod
+    def visit_if_stmt(self, stmt: IfStmt) -> None:
         pass
     
     @abstractmethod

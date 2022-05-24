@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 from .environment import Environment
 from .owl_ast.stmt import VarDeclaration
 from .expr_visitor import ExprVisitor
-from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt
+from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt, IfStmt
 
 
 def stringify(value: Any) -> str:
@@ -48,6 +48,13 @@ class StmtVisitor(Visitor):
     def visit_block_stmt(self, stmt: BlockStmt) -> None:
         block_environment = Environment(self.interpreter.curr_environment)
         self.execute_block(stmt.statements, block_environment)
+
+    def visit_if_stmt(self, stmt: IfStmt) -> None:
+        value = self.expr_visitor.evaluate(stmt.condition)
+        if bool(value):
+            self.execute(stmt.then_branch)
+        elif stmt.else_branch is not None:
+            self.execute(stmt.else_branch)
 
     def execute_block(self, statements: List[Stmt], block_env: Environment):
         previous = self.interpreter.curr_environment
