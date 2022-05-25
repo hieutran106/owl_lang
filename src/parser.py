@@ -1,7 +1,7 @@
 from typing import List
 
 from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt
-from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment
+from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment, Logical
 from .token_type import TokenType
 from .owl_token import Token
 
@@ -76,7 +76,6 @@ class Parser:
             else_branch = self.statement()
         return IfStmt(condition, then_branch, else_branch)
 
-
     def block_statement(self):
         statements = []
         while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
@@ -99,7 +98,7 @@ class Parser:
         return self.assignment()
 
     def assignment(self) -> Expr:
-        expr = self.equality()
+        expr = self.logical_or()
         if self.match(TokenType.EQUAL):
             equal_token = self.previous()
             value = self.assignment()
@@ -110,7 +109,23 @@ class Parser:
             self.error(equal_token, "Invalid assignment target.")
         return expr
 
+    def logical_or(self) -> Expr:
+        expr = self.logical_and()
+        while self.match(TokenType.OR):
+            operator = self.previous()
+            right = self.logical_and()
+            # logical or expression
+            expr = Logical(expr, operator, right)
+        return expr
 
+    def logical_and(self) -> Expr:
+        expr = self.equality()
+        while self.match(TokenType.AND):
+            operator = self.previous()
+            right = self.equality()
+            # logical and expression
+            expr = Logical(expr, operator, right)
+        return expr
 
     def equality(self) -> Expr:
         expr = self.comparison()
@@ -206,7 +221,6 @@ class Parser:
                 return
             # otherwise advance
             self.advance()
-
 
     def match(self, *token_types: TokenType):
         for type in token_types:

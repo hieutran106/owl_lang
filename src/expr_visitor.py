@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 
 from .owl_ast.expr import Assignment
 from .owl_ast.expr import Variable
-from .owl_ast.expr import Unary, Literal, Grouping, Binary
+from .owl_ast.expr import Unary, Literal, Grouping, Binary, Logical
 from .owl_token import Token
 from .token_type import TokenType
 from .owl_ast.expr import Visitor, Expr
@@ -110,6 +110,17 @@ class ExprVisitor(Visitor):
         value = self.evaluate(expr.value)
         self.interpreter.assign_variable(expr.name, value)
         return value
+
+    def visit_logical_expr(self, expr: Logical):
+        left_value = self.evaluate(expr.left)
+        if expr.operator.type == TokenType.OR:
+            if bool(left_value):
+                return left_value
+        else:
+            if not bool(left_value):
+                return left_value
+
+        return self.evaluate(expr.right)
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)

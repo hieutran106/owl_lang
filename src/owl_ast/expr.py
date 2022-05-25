@@ -21,6 +21,16 @@ class Assignment(Expr):
 
 
 @dataclass
+class Logical(Expr):
+    left: Expr
+    operator: Token
+    right: Expr
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_logical_expr(self)
+
+
+@dataclass
 class Binary(Expr):
     left: Expr
     operator: Token
@@ -67,6 +77,10 @@ class Visitor(ABC):
     
     @abstractmethod
     def visit_assignment_expr(self, expr: Assignment):
+        pass
+    
+    @abstractmethod
+    def visit_logical_expr(self, expr: Logical):
         pass
     
     @abstractmethod

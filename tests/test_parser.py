@@ -51,6 +51,12 @@ class TestParser(unittest.TestCase):
         statements, _ = parse_source(source)
         self.assertIsInstance(statements[0], BlockStmt)
 
+    def test_parse_assignment(self):
+        source = """
+        var a = 0;
+        a = 1 + 1;
+        """
+        statements, _ = parse_source(source)
 
 
 if __name__ == "__main__":

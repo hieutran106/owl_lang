@@ -51,6 +51,7 @@ if __name__ == "__main__":
     # generate expressions
     define_ast("Expr", [
         "Assignment : Token name, Expr value",
+        "Logical    : Expr left, Token operator, Expr right",
         "Binary     : Expr left, Token operator, Expr right",
         "Grouping   : Expr expression",
         "Literal    : Any value",

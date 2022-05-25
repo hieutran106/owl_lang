@@ -49,6 +49,29 @@ class TestExprEvaluation(unittest.TestCase):
         value = evaluate_source(source)
         self.assertEqual(value, True)
 
+    def test_logical_or(self):
+        source = 'true or false'
+        value = evaluate_source(source)
+        self.assertEqual(value, True)
+
+        source = '"Hello" or false'
+        value = evaluate_source(source)
+        self.assertEqual(value, "Hello")
+
+        source = '"" or 1'
+        value = evaluate_source(source)
+        self.assertEqual(value, 1)
+
+        # return right value
+        source = '"" or false'
+        value = evaluate_source(source)
+        self.assertEqual(value, False)
+
+    def test_logical_and(self):
+        source = 'true and false'
+        value = evaluate_source(source)
+        self.assertEqual(value, False)
+
 
 if __name__ == "__main__":
     unittest.main()
