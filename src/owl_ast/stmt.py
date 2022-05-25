@@ -47,6 +47,15 @@ class PrintStmt(Stmt):
 
 
 @dataclass
+class WhileStmt(Stmt):
+    condition: Expr
+    body: Stmt
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_while_stmt(self)
+
+
+@dataclass
 class VarDeclaration(Stmt):
     name: Token
     initializer: Expr
@@ -71,6 +80,10 @@ class Visitor(ABC):
     
     @abstractmethod
     def visit_print_stmt(self, stmt: PrintStmt) -> None:
+        pass
+    
+    @abstractmethod
+    def visit_while_stmt(self, stmt: WhileStmt) -> None:
         pass
     
     @abstractmethod

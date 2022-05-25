@@ -46,6 +46,7 @@ if __name__ == "__main__":
         "ExpressionStmt  : Expr expression",
         "IfStmt          : Expr condition, Stmt then_branch, Stmt else_branch",
         "PrintStmt       : Expr expression",
+        "WhileStmt       : Expr condition, Stmt body",
         "VarDeclaration  : Token name, Expr initializer"
     ])
     # generate expressions
