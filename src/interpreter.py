@@ -7,6 +7,7 @@ from .stmt_visitor import StmtVisitor
 from .parse_error import OwlRuntimeError
 from rich import print
 from .environment import Environment
+from .native_functions import ClockFunction, NumberFunction
 
 
 class Interpreter:
@@ -14,9 +15,12 @@ class Interpreter:
     stmt_visitor: StmtVisitor
     runtime_errors: List[OwlRuntimeError]
     curr_environment: Environment
+    global_environment: Environment
 
     def __init__(self):
-        self.curr_environment = Environment()
+        self.global_environment = Environment()
+        self.curr_environment = self.global_environment
+        self.define_native_function()
         self.expr_visitor = ExprVisitor(self)
         self.stmt_visitor = StmtVisitor(self.expr_visitor, self)
         self.runtime_errors = []
@@ -37,3 +41,9 @@ class Interpreter:
 
     def define_variable(self, name: str, value: Any):
         self.curr_environment.define(name, value)
+
+    def define_native_function(self):
+        clock_function = ClockFunction()
+        number_function = NumberFunction()
+        self.global_environment.define("clock", clock_function)
+        self.global_environment.define("number", number_function)

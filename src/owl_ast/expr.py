@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from src.owl_token import Token
 from typing import Any
 from abc import ABC, abstractmethod
-
+from typing import List
 
 class Expr(ABC):
     @abstractmethod
@@ -38,6 +38,16 @@ class Binary(Expr):
     
     def accept(self, visitor: Visitor):
         return visitor.visit_binary_expr(self)
+
+
+@dataclass
+class FunctionCall(Expr):
+    callee: Expr
+    paren: Token
+    arguments: List[Expr]
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_functioncall_expr(self)
 
 
 @dataclass
@@ -85,6 +95,10 @@ class Visitor(ABC):
     
     @abstractmethod
     def visit_binary_expr(self, expr: Binary):
+        pass
+    
+    @abstractmethod
+    def visit_functioncall_expr(self, expr: FunctionCall):
         pass
     
     @abstractmethod

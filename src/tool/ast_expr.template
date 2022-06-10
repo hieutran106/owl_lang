@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from src.owl_token import Token
 from typing import Any
 from abc import ABC, abstractmethod
-
+from typing import List
 
 class {{ base_name }}(ABC):
     @abstractmethod

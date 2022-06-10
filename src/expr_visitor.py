@@ -5,12 +5,12 @@ if TYPE_CHECKING:
 
 from .owl_ast.expr import Assignment
 from .owl_ast.expr import Variable
-from .owl_ast.expr import Unary, Literal, Grouping, Binary, Logical
+from .owl_ast.expr import Unary, Literal, Grouping, Binary, Logical, FunctionCall
 from .owl_token import Token
 from .token_type import TokenType
 from .owl_ast.expr import Visitor, Expr
 from .parse_error import OwlRuntimeError
-
+from .data_types.owl_function import OwlCallable
 
 def check_number_operand(operator: Token, operand) -> None:
     if isinstance(operand, float):
@@ -121,6 +121,18 @@ class ExprVisitor(Visitor):
                 return left_value
 
         return self.evaluate(expr.right)
+
+    def visit_functioncall_expr(self, expr: FunctionCall):
+        callee = self.evaluate(expr.callee)
+        arguments = []
+        for argument in expr.arguments:
+            arg_value = self.evaluate(argument)
+            arguments.append(arg_value)
+        if not isinstance(callee, OwlCallable):
+            raise OwlRuntimeError(expr.paren, "Can only call functions.")
+        if len(arguments) != callee.arity():
+            raise OwlRuntimeError(expr.paren, f"Expect {callee.arity()} arguments but got {len(arguments)}.")
+        return callee.call(self, arguments)
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)
