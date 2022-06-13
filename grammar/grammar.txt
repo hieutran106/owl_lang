@@ -2,9 +2,13 @@
 program        → declaration* EOF ;
 
 declaration    → varDecl
+               | functionDecl
                | statement ;
 
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+
+functionDecl   → "fun" function;
+function       → IDENTIFIER "(" parameters? ")" block;
 
 statement      → exprStmt
                | ifStmt
