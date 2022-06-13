@@ -23,3 +23,14 @@ class NumberFunction(OwlCallable):
 
     def __str__(self):
         return "<native number fn>"
+
+
+class InputFunction(OwlCallable):
+    def call(self, interpreter, arguments: List):
+        return input(arguments[0])
+
+    def arity(self) -> int:
+        return 1
+
+    def __str__(self):
+        return "<native input fn>"

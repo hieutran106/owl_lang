@@ -7,7 +7,7 @@ from .stmt_visitor import StmtVisitor
 from .parse_error import OwlRuntimeError
 from rich import print
 from .environment import Environment
-from .native_functions import ClockFunction, NumberFunction
+from .native_functions import ClockFunction, NumberFunction, InputFunction
 
 
 class Interpreter:
@@ -45,5 +45,7 @@ class Interpreter:
     def define_native_function(self):
         clock_function = ClockFunction()
         number_function = NumberFunction()
+        input_function = InputFunction()
         self.global_environment.define("clock", clock_function)
         self.global_environment.define("number", number_function)
+        self.global_environment.define("input", input_function)

@@ -7,6 +7,7 @@ from src.parser import Parser
 from src.token_type import TokenType
 from .test_utils import parse_source
 
+
 class TestParser(unittest.TestCase):
     def test_case1(self):
         source = """
@@ -57,6 +58,15 @@ class TestParser(unittest.TestCase):
         a = 1 + 1;
         """
         statements, _ = parse_source(source)
+
+    def test_parse_synchronize(self):
+        source = """
+        print "before";
+        var a = 0
+        for (var i=0; i < 10; i=i+1)
+        """
+        statements, parser = parse_source(source)
+        self.assertEqual(len(parser.parse_errors), 2)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt, WhileStmt
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment, Logical, FunctionCall
@@ -38,7 +38,7 @@ class Parser:
             statements.append(self.declaration())
         return statements
 
-    def declaration(self) -> Stmt:
+    def declaration(self) -> Optional[Stmt]:
         try:
             if self.match(TokenType.VAR):
                 return self.variable_declaration()
@@ -258,7 +258,6 @@ class Parser:
 
     def error(self, token: Token, message: str) -> ParseError:
         error = ParseError(token, message)
-        self.parse_errors.append(error)
         return error
 
     def synchronize(self):
@@ -266,7 +265,7 @@ class Parser:
         Discard tokens until we reach the beginning of the next token
         :return:
         """
-        self.advance()
+        # self.advance()
         while not self.is_at_end():
             # end expression statement
             if self.previous().type == TokenType.SEMICOLON:

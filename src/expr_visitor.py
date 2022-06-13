@@ -129,7 +129,7 @@ class ExprVisitor(Visitor):
             arg_value = self.evaluate(argument)
             arguments.append(arg_value)
         if not isinstance(callee, OwlCallable):
-            raise OwlRuntimeError(expr.paren, "Can only call functions.")
+            raise OwlRuntimeError(expr.paren, "Object is not callable.")
         if len(arguments) != callee.arity():
             raise OwlRuntimeError(expr.paren, f"Expect {callee.arity()} arguments but got {len(arguments)}.")
         return callee.call(self, arguments)
