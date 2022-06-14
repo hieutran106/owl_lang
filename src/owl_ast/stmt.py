@@ -47,6 +47,15 @@ class PrintStmt(Stmt):
 
 
 @dataclass
+class ReturnStmt(Stmt):
+    keyword: Token
+    value: Expr
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_return_stmt(self)
+
+
+@dataclass
 class WhileStmt(Stmt):
     condition: Expr
     body: Stmt
@@ -90,6 +99,10 @@ class Visitor(ABC):
     
     @abstractmethod
     def visit_print_stmt(self, stmt: PrintStmt) -> None:
+        pass
+    
+    @abstractmethod
+    def visit_return_stmt(self, stmt: ReturnStmt) -> None:
         pass
     
     @abstractmethod
