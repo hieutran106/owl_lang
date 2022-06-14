@@ -13,6 +13,7 @@ function       → IDENTIFIER "(" parameters? ")" block;
 statement      → exprStmt
                | ifStmt
                | printStmt
+               | returnStmt
                | whileStmt
                | forStmt
                | blockStmt ;
@@ -20,6 +21,7 @@ statement      → exprStmt
 exprStmt       → expression ";" ;
 ifStmt         → "if" "(" expression ")" statement ( "else" statement )? ;
 printStmt      → "print" expression ";" ;
+returnStmt     → "return" expression? ";" ;
 whileStmt      → "while" "(" expression ")" statement ;
 forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
                  expression? ";"
