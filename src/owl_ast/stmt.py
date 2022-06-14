@@ -64,6 +64,16 @@ class VarDeclaration(Stmt):
         return visitor.visit_var_declaration(self)
 
 
+@dataclass
+class FunctionDeclaration(Stmt):
+    name: Token
+    parameters: List[Token]
+    body: List[Stmt]
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_function_declaration(self)
+
+
 class Visitor(ABC):
     
     @abstractmethod
@@ -88,5 +98,9 @@ class Visitor(ABC):
     
     @abstractmethod
     def visit_var_declaration(self, stmt: VarDeclaration) -> None:
+        pass
+    
+    @abstractmethod
+    def visit_function_declaration(self, stmt: FunctionDeclaration) -> None:
         pass
     

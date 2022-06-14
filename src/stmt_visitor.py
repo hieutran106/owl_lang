@@ -1,13 +1,15 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, List
 
+from .data_types.owl_function import OwlFunction
+
 if TYPE_CHECKING:
     from .interpreter import Interpreter
 
 from .environment import Environment
 from .owl_ast.stmt import VarDeclaration
 from .expr_visitor import ExprVisitor
-from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt, IfStmt, WhileStmt
+from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt, IfStmt, WhileStmt, FunctionDeclaration
 
 
 def stringify(value: Any) -> str:
@@ -61,6 +63,12 @@ class StmtVisitor(Visitor):
         while condition_value:
             self.execute(stmt.body)
             condition_value = self.expr_visitor.evaluate(stmt.condition)
+
+    def visit_function_declaration(self, stmt: FunctionDeclaration) -> None:
+        fun_name = stmt.name.lexeme
+        function = OwlFunction(stmt)
+        # define function in the environment
+        self.interpreter.define_variable(fun_name, function)
 
     def execute_block(self, statements: List[Stmt], block_env: Environment):
         previous = self.interpreter.curr_environment

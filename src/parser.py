@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt, WhileStmt
+from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt, WhileStmt, FunctionDeclaration
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment, Logical, FunctionCall
 from .token_type import TokenType
 from .owl_token import Token
@@ -42,6 +42,8 @@ class Parser:
         try:
             if self.match(TokenType.VAR):
                 return self.variable_declaration()
+            if self.match(TokenType.FUN):
+                return self.function_declaration("function")
             return self.statement()
         except ParseError as parse_error:
             self.parse_errors.append(parse_error)
@@ -55,6 +57,22 @@ class Parser:
             initializer = self.expression()
         self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
         return VarDeclaration(name, initializer)
+
+    def function_declaration(self, kind: str) -> Stmt:
+        name = self.consume(TokenType.IDENTIFIER, f"Expect {kind} name.")
+        self.consume(TokenType.LEFT_PAREN, f"Expect '(' after {kind} name.")
+        # parse function parameters
+        parameters = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            param = self.consume(TokenType.IDENTIFIER, "Expect parameter name")
+            parameters.append(param)
+
+            while self.match(TokenType.COMMA):
+                param = self.consume(TokenType.IDENTIFIER, "Expect parameter name")
+                parameters.append(param)
+        self.consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.")
+        body = self.block_statement()
+        return FunctionDeclaration(name, parameters, body)
 
     def statement(self) -> Stmt:
         if self.match(TokenType.PRINT):
@@ -119,7 +137,7 @@ class Parser:
             else_branch = self.statement()
         return IfStmt(condition, then_branch, else_branch)
 
-    def block_statement(self):
+    def block_statement(self) -> List[Stmt]:
         statements = []
         while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
             stmt = self.declaration()

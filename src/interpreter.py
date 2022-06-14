@@ -40,6 +40,9 @@ class Interpreter:
         return self.curr_environment.get(name)
 
     def define_variable(self, name: str, value: Any):
+        """
+        Define a name at current environment
+        """
         self.curr_environment.define(name, value)
 
     def define_native_function(self):
