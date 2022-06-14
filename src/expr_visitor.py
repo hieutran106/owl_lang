@@ -132,7 +132,7 @@ class ExprVisitor(Visitor):
             raise OwlRuntimeError(expr.paren, "Object is not callable.")
         if len(arguments) != callee.arity():
             raise OwlRuntimeError(expr.paren, f"Expect {callee.arity()} arguments but got {len(arguments)}.")
-        return callee.call(self, self.interpreter, arguments)
+        return callee.call(self.interpreter, arguments)
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)

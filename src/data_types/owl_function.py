@@ -2,10 +2,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List
 
-
-
-from environment import Environment
-from owl_ast.stmt import FunctionDeclaration
+from src.environment import Environment
+from src.owl_ast.stmt import FunctionDeclaration
 
 
 class OwlCallable(ABC):
@@ -38,3 +36,5 @@ class OwlFunction(OwlCallable):
 
     def __str__(self):
         return f"<fn {self.declaration.name.lexeme} >"
+
+

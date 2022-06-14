@@ -71,6 +71,7 @@ class Parser:
                 param = self.consume(TokenType.IDENTIFIER, "Expect parameter name")
                 parameters.append(param)
         self.consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.")
+        self.consume(TokenType.LEFT_BRACE, f"Expect '{{' before {kind} body.")
         body = self.block_statement()
         return FunctionDeclaration(name, parameters, body)
 

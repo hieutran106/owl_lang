@@ -41,7 +41,7 @@ class Interpreter:
 
     def define_variable(self, name: str, value: Any):
         """
-        Define a name at current environment
+        Bind a name to a value at current environment
         """
         self.curr_environment.define(name, value)
 

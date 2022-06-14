@@ -19,3 +19,7 @@ class TestBlockStmt(unittest.TestCase):
         """
         interpreter = interpret_source(source)
         self.assertEqual(interpreter.curr_environment.values['a'], "global a");
+
+
+if __name__ == "__main__":
+    unittest.main()

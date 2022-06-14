@@ -1,15 +1,18 @@
 import unittest
-from .test_utils import interpret_source
+from .test_utils import interpret_source, parse_source
 
 class TestFunctionDeclaration(unittest.TestCase):
     def test_function_declaration_1(self):
         source = """
         fun sum(a, b) {
             var result = a + b;
-            return result;
+            print result;
         }
-        print sum;
-        var result = sum(1, 2);
+        sum(1, 2);
         """
+        # statements, parser = parse_source(source)
         interpreter = interpret_source(source)
         print(1)
+
+if __name__ == "__main__":
+    unittest.main()
