@@ -12,7 +12,6 @@ class TestFunctionDeclaration(unittest.TestCase):
         """
         # statements, parser = parse_source(source)
         interpreter = interpret_source(source)
-        print(1)
 
 if __name__ == "__main__":
     unittest.main()

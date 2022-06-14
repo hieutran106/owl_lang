@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt, WhileStmt, FunctionDeclaration
+from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt, WhileStmt, FunctionDeclaration, ReturnStmt
 from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment, Logical, FunctionCall
 from .token_type import TokenType
 from .owl_token import Token
@@ -87,7 +87,17 @@ class Parser:
             return self.while_statement()
         if self.match(TokenType.FOR):
             return self.for_statement()
+        if self.match(TokenType.RETURN):
+            return self.return_statement()
         return self.expression_statement()
+
+    def return_statement(self) -> Stmt:
+        keyword = self.previous()
+        value = None
+        if not self.check(TokenType.SEMICOLON):
+            value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after return value.")
+        return ReturnStmt(keyword, value)
 
     def for_statement(self) -> Stmt:
         self.consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.")

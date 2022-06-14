@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, List
 
-from .data_types.owl_function import OwlFunction
+from .data_types.owl_function import OwlFunction, OwlReturnValue
 
 if TYPE_CHECKING:
     from .interpreter import Interpreter
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 from .environment import Environment
 from .owl_ast.stmt import VarDeclaration
 from .expr_visitor import ExprVisitor
-from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt, IfStmt, WhileStmt, FunctionDeclaration
+from .owl_ast.stmt import PrintStmt, ExpressionStmt, Visitor, Stmt, BlockStmt, IfStmt, WhileStmt, FunctionDeclaration, ReturnStmt
 
 
 def stringify(value: Any) -> str:
@@ -69,6 +69,12 @@ class StmtVisitor(Visitor):
         function = OwlFunction(stmt)
         # define function in the environment
         self.interpreter.define_variable(fun_name, function)
+
+    def visit_return_stmt(self, stmt: ReturnStmt) -> None:
+        value = None
+        if stmt.value is not None:
+            value = self.expr_visitor.evaluate(stmt.value)
+        raise OwlReturnValue(value)
 
     def execute_block(self, statements: List[Stmt], block_env: Environment):
         previous = self.interpreter.curr_environment

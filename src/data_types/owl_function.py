@@ -29,7 +29,10 @@ class OwlFunction(OwlCallable):
             function_environment.define(name.lexeme, value)
 
         function_body = self.declaration.body
-        interpreter.stmt_visitor.execute_block(function_body, function_environment)
+        try:
+            interpreter.stmt_visitor.execute_block(function_body, function_environment)
+        except OwlReturnValue as owl_return:
+            return owl_return.value
 
     def arity(self) -> int:
         return len(self.declaration.parameters)
@@ -38,3 +41,7 @@ class OwlFunction(OwlCallable):
         return f"<fn {self.declaration.name.lexeme} >"
 
 
+class OwlReturnValue(Exception):
+    def __init__(self, value):
+        super().__init__()
+        self.value = value
