@@ -66,7 +66,9 @@ class StmtVisitor(Visitor):
 
     def visit_function_declaration(self, stmt: FunctionDeclaration) -> None:
         fun_name = stmt.name.lexeme
-        function = OwlFunction(stmt)
+        # capture current environment as function close
+        closure = self.interpreter.curr_environment
+        function = OwlFunction(declaration=stmt, closure=closure)
         # define function in the environment
         self.interpreter.define_variable(fun_name, function)
 

@@ -22,9 +22,10 @@ class OwlCallable(ABC):
 @dataclass
 class OwlFunction(OwlCallable):
     declaration: FunctionDeclaration
+    closure: Environment
 
     def call(self, interpreter, arguments: List):
-        function_environment = Environment(interpreter.global_environment)
+        function_environment = Environment(self.closure)
         for (name, value) in zip(self.declaration.parameters, arguments):
             function_environment.define(name.lexeme, value)
 
