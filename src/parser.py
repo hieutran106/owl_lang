@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from .owl_ast.stmt import Stmt, PrintStmt, ExpressionStmt, VarDeclaration, BlockStmt, IfStmt, WhileStmt, FunctionDeclaration, ReturnStmt
-from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment, Logical, FunctionCall
+from .owl_ast.expr import Expr, Literal, Grouping, Binary, Visitor, Unary, Variable, Assignment, Logical, FunctionCall, Ternary
 from .token_type import TokenType
 from .owl_token import Token
 
@@ -170,7 +170,7 @@ class Parser:
         return self.assignment()
 
     def assignment(self) -> Expr:
-        expr = self.logical_or()
+        expr = self.ternary()
         if self.match(TokenType.EQUAL):
             equal_token = self.previous()
             value = self.assignment()
@@ -179,6 +179,15 @@ class Parser:
                 return Assignment(name, value)
 
             self.error(equal_token, "Invalid assignment target.")
+        return expr
+
+    def ternary(self) -> Expr:
+        expr = self.logical_or()
+        if self.match(TokenType.QUESTION):
+            then_expr = self.ternary()
+            self.consume(TokenType.COLON, "Expect ':' after ternary then condition")
+            else_expr = self.ternary()
+            expr = Ternary(condition=expr, thenExpr=then_expr, elseExpr=else_expr)
         return expr
 
     def logical_or(self) -> Expr:

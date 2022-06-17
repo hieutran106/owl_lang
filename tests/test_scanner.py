@@ -23,6 +23,15 @@ class TestScanner(unittest.TestCase):
         last = tokens[-2]
         self.assertEqual(last.type, TokenType.RIGHT_BRACE)
 
+    def test_case3(self):
+        source = """
+        5 > 3 ? true : false
+        """
+        scanner = Scanner(source)
+        tokens = scanner.scan_tokens()
+        last = tokens[3]
+        self.assertEqual(last.type, TokenType.QUESTION)
+
     def test_string_literal(self):
         source = """
         var x = "hello world"

@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 
 from .owl_ast.expr import Assignment
 from .owl_ast.expr import Variable
-from .owl_ast.expr import Unary, Literal, Grouping, Binary, Logical, FunctionCall
+from .owl_ast.expr import Unary, Literal, Grouping, Binary, Logical, FunctionCall, Ternary
 from .owl_token import Token
 from .token_type import TokenType
 from .owl_ast.expr import Visitor, Expr
@@ -133,6 +133,15 @@ class ExprVisitor(Visitor):
         if len(arguments) != callee.arity():
             raise OwlRuntimeError(expr.paren, f"Expect {callee.arity()} arguments but got {len(arguments)}.")
         return callee.call(self.interpreter, arguments)
+
+    def visit_ternary_expr(self, expr: Ternary):
+        condition_value = self.evaluate(expr.condition)
+        if condition_value:
+            then_value = self.evaluate(expr.thenExpr)
+            return then_value
+        else:
+            else_value = self.evaluate(expr.elseExpr)
+            return else_value
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)

@@ -41,7 +41,9 @@ class Scanner:
             "-": TokenType.MINUS,
             "+": TokenType.PLUS,
             ";": TokenType.SEMICOLON,
-            "*": TokenType.STAR
+            "*": TokenType.STAR,
+            "?": TokenType.QUESTION,
+            ":": TokenType.COLON
         }
 
         self.keywords = {

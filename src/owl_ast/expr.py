@@ -21,6 +21,16 @@ class Assignment(Expr):
 
 
 @dataclass
+class Ternary(Expr):
+    condition: Expr
+    thenExpr: Expr
+    elseExpr: Expr
+    
+    def accept(self, visitor: Visitor):
+        return visitor.visit_ternary_expr(self)
+
+
+@dataclass
 class Logical(Expr):
     left: Expr
     operator: Token
@@ -87,6 +97,10 @@ class Visitor(ABC):
     
     @abstractmethod
     def visit_assignment_expr(self, expr: Assignment):
+        pass
+    
+    @abstractmethod
+    def visit_ternary_expr(self, expr: Ternary):
         pass
     
     @abstractmethod
