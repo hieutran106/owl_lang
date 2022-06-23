@@ -33,19 +33,24 @@ class StmtResolver(Visitor):
         self.resolver.end_scope()
 
     def visit_expression_stmt(self, stmt: ExpressionStmt) -> None:
-        pass
+        self.expr_resolver.resolve_expr(stmt.expression)
 
     def visit_if_stmt(self, stmt: IfStmt) -> None:
-        pass
+        self.expr_resolver.resolve_expr(stmt.condition)
+        self.resolve_statement(stmt.then_branch)
+        if stmt.else_branch is not None:
+            self.resolve_statement(stmt.else_branch)
 
     def visit_print_stmt(self, stmt: PrintStmt) -> None:
-        pass
+        self.expr_resolver.resolve_expr(stmt.expression)
 
     def visit_return_stmt(self, stmt: ReturnStmt) -> None:
-        pass
+        if stmt.value is not None:
+            self.expr_resolver.resolve_expr(stmt.value)
 
     def visit_while_stmt(self, stmt: WhileStmt) -> None:
-        pass
+        self.expr_resolver.resolve_expr(stmt.condition)
+        self.resolve_statement(stmt.body)
 
     def visit_var_declaration(self, stmt: VarDeclaration) -> None:
         """
@@ -57,4 +62,15 @@ class StmtResolver(Visitor):
         self.resolver.define(stmt.name)
 
     def visit_function_declaration(self, stmt: FunctionDeclaration) -> None:
-        pass
+        self.resolver.declare(stmt.name)
+        self.resolver.define(stmt.name)
+
+    def resolve_function(self, stmt: FunctionDeclaration) -> None:
+        self.resolver.introduce_new_scope()
+        # bind parameters to inner function scope
+        for param in stmt.parameters:
+            self.resolver.declare(param)
+            self.resolver.define(param)
+        # resolve function body
+        self.resolve_statements(stmt.body)
+        self.resolver.end_scope()

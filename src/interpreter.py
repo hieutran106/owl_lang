@@ -1,4 +1,5 @@
-from typing import List, Any
+from __future__ import annotations
+from typing import List, Any, Dict, TYPE_CHECKING, Union
 
 from .owl_token import Token
 from .owl_ast.stmt import Stmt
@@ -9,6 +10,8 @@ from rich import print
 from .environment import Environment
 from .native_functions import ClockFunction, NumberFunction, InputFunction
 
+if TYPE_CHECKING:
+    from .owl_ast.expr import Expr, Variable, Assignment
 
 class Interpreter:
     expr_visitor: ExprVisitor
@@ -17,6 +20,9 @@ class Interpreter:
     curr_environment: Environment
     global_environment: Environment
 
+    # store resolution information
+    locals: Dict[Expr, int]
+
     def __init__(self):
         self.global_environment = Environment()
         self.curr_environment = self.global_environment
@@ -24,6 +30,14 @@ class Interpreter:
         self.expr_visitor = ExprVisitor(self)
         self.stmt_visitor = StmtVisitor(self.expr_visitor, self)
         self.runtime_errors = []
+        self.locals = {}
+
+    def resolve(self, expr: Union[Variable, Assignment], depth: int):
+        """
+        Tell interpreter how many scopes there are between the current scope
+        and the scope where the variable is defined
+        """
+        self.locals[expr] = depth
 
     def interpret(self, statements: List[Stmt]):
         try:

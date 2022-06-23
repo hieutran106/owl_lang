@@ -1,19 +1,29 @@
 from __future__ import annotations
-from typing import List, Dict, TYPE_CHECKING
+from typing import List, Dict, TYPE_CHECKING, Union
+
+import logging
+
 from src.interpreter import Interpreter
 from .expr_resolver import ExprResolver
 from .stmt_resolver import StmtResolver
+
+
+
 if TYPE_CHECKING:
     from src.owl_token import Token
+    from src.parse_error import ResolverError
+    from src.owl_ast.expr import Variable, Assignment
 
 class Resolver:
     interpreter: Interpreter
     stmt_resolver: StmtResolver
     expr_resolver: ExprResolver
+    resolver_errors: List[ResolverError]
     scopes: List[Dict[str, bool]]
 
     def __init__(self, interpreter: Interpreter):
         self.interpreter = interpreter
+        self.resolver_errors = []
         self.expr_resolver = ExprResolver(self)
         self.stmt_resolver = StmtResolver(self, self.expr_resolver)
 
@@ -37,4 +47,17 @@ class Resolver:
             return
         inner_most = self.scopes[-1]
         inner_most[name.lexeme] = True
+
+    def resolve_local(self, expr: Union[Assignment, Variable]):
+        logging.info(f"Start resolve local for {expr=}")
+        name = expr.name
+        size = len(self.scopes)
+        # loop backward
+        for index, scope in reversed(list(enumerate(self.scopes))):
+            if name.lexeme in scope:
+                depth = size - 1 - index
+                # store depth between current scope and scope where the variable is defined
+                self.interpreter.resolve(expr, depth)
+                logging.info(f"{expr}:{depth=}")
+                return
 

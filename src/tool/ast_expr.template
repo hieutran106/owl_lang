@@ -11,7 +11,7 @@ class {{ base_name }}(ABC):
         pass
 
 {% for ast_node in ast_nodes %}
-@dataclass
+@dataclass(frozen=True)
 class {{ ast_node.class_name }}({{ base_name }}):
     {% for field in ast_node.fields -%}
     {{ field[1] }}: {{ field[0] }}
