@@ -21,7 +21,7 @@ class Interpreter:
     global_environment: Environment
 
     # store resolution information
-    locals: Dict[Expr, int]
+    resolved_local_variables: Dict[Expr, int]
 
     def __init__(self):
         self.global_environment = Environment()
@@ -30,14 +30,14 @@ class Interpreter:
         self.expr_visitor = ExprVisitor(self)
         self.stmt_visitor = StmtVisitor(self.expr_visitor, self)
         self.runtime_errors = []
-        self.locals = {}
+        self.resolved_local_variables = {}
 
     def resolve(self, expr: Union[Variable, Assignment], depth: int):
         """
         Tell interpreter how many scopes there are between the current scope
         and the scope where the variable is defined
         """
-        self.locals[expr] = depth
+        self.resolved_local_variables[expr] = depth
 
     def interpret(self, statements: List[Stmt]):
         try:

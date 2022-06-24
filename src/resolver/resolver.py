@@ -33,15 +33,17 @@ class Resolver:
         self.scopes.pop()
 
     def declare(self, name: Token):
-        # TODO - Why ?
+        # only resolve local variables
+        # global variables are treated specially
         if len(self.scopes) == 0:
             return
         inner_most = self.scopes[-1]
         # Mark a name is 'not ready yet'
         inner_most[name.lexeme] = False
-        print(f"Declare {name}, scopes len = {len(self.scopes)}")
 
     def define(self, name: Token):
+        # only resolve local variables
+        # global variables are treated specially
         if len(self.scopes) == 0:
             return
         inner_most = self.scopes[-1]
