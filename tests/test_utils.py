@@ -4,6 +4,7 @@ from src.owl_ast.stmt import Stmt
 from src.scanner import Scanner
 from src.parser import Parser
 from src.interpreter import Interpreter
+from src.resolver.resolver import Resolver
 
 
 def parse_source(source: str):
@@ -17,6 +18,8 @@ def parse_source(source: str):
 
 def interpret_statements(statements: List[Stmt]):
     interpreter = Interpreter()
+    resolver = Resolver(interpreter)
+    resolver.resolve(statements)
     interpreter.interpret(statements)
     return interpreter
 

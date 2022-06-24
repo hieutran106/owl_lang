@@ -1,8 +1,6 @@
 from __future__ import annotations
 from typing import List, Dict, TYPE_CHECKING, Union
 
-import logging
-
 from src.interpreter import Interpreter
 from .expr_resolver import ExprResolver
 from .stmt_resolver import StmtResolver
@@ -50,7 +48,6 @@ class Resolver:
         inner_most[name.lexeme] = True
 
     def resolve_local(self, expr: Union[Assignment, Variable]):
-        print(f"Start resolve local for {expr=}")
         name = expr.name
         size = len(self.scopes)
         # loop backward
@@ -59,7 +56,6 @@ class Resolver:
                 depth = size - 1 - index
                 # store depth between current scope and scope where the variable is defined
                 self.interpreter.resolve(expr, depth)
-                logging.info(f"{expr}:{depth=}")
                 return
 
     def resolve(self, statements: List[Stmt]):

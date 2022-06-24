@@ -11,12 +11,9 @@ class TestResolver(unittest.TestCase):
         {
             var a = 1;
             {
-                a = 2;
                 {
-                    a = 5;
                     {
                         var z = a + 1;
-                        print z;
                     }
                 }
             }
@@ -27,9 +24,19 @@ class TestResolver(unittest.TestCase):
         resolver = Resolver(interpreter)
         resolver.resolve(statements)
         locals = interpreter.locals
-        print(locals)
-        interpreter.interpret(statements)
+        self.assertEqual(len(locals.items()), 1)
+        first_key = list(locals.keys())[0]
+        self.assertEqual(locals[first_key], 3)
 
-
-
-
+    def test_should_show_error_2(self):
+        source = """
+        {
+            var a = a + 1;
+        }
+        """
+        statements, _ = parse_source(source)
+        interpreter = Interpreter()
+        resolver = Resolver(interpreter)
+        resolver.resolve(statements)
+        errors = resolver.resolver_errors
+        self.assertEqual(errors[0].message, "Can't read local variable in its own initializer.")
