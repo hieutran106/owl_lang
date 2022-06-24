@@ -6,7 +6,6 @@ from src.parse_error import ResolverError
 
 if TYPE_CHECKING:
     from .resolver import Resolver
-    from src.owl_token import Token
 
 
 class ExprResolver(Visitor):
@@ -57,7 +56,8 @@ class ExprResolver(Visitor):
             # TODO - Why check len
             inner_most = self.resolver.scopes[-1]
             initialized = inner_most.get(expr.name.lexeme)
-            if not initialized:
+            if initialized == False:
+                # Variable has been declared but not yet defined
                 raise ResolverError(expr.name, "Can't read local variable in its own initializer.")
         # resolve actual variable using this helper
         self.resolver.resolve_local(expr)

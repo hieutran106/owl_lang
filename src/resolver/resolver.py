@@ -6,13 +6,12 @@ import logging
 from src.interpreter import Interpreter
 from .expr_resolver import ExprResolver
 from .stmt_resolver import StmtResolver
-
-
+from src.parse_error import ResolverError
 
 if TYPE_CHECKING:
     from src.owl_token import Token
-    from src.parse_error import ResolverError
     from src.owl_ast.expr import Variable, Assignment
+    from src.owl_ast.stmt import Stmt
 
 class Resolver:
     interpreter: Interpreter
@@ -24,6 +23,7 @@ class Resolver:
     def __init__(self, interpreter: Interpreter):
         self.interpreter = interpreter
         self.resolver_errors = []
+        self.scopes = []
         self.expr_resolver = ExprResolver(self)
         self.stmt_resolver = StmtResolver(self, self.expr_resolver)
 
@@ -41,6 +41,7 @@ class Resolver:
         inner_most = self.scopes[-1]
         # Mark a name is 'not ready yet'
         inner_most[name.lexeme] = False
+        print(f"Declare {name}, scopes len = {len(self.scopes)}")
 
     def define(self, name: Token):
         if len(self.scopes) == 0:
@@ -49,7 +50,7 @@ class Resolver:
         inner_most[name.lexeme] = True
 
     def resolve_local(self, expr: Union[Assignment, Variable]):
-        logging.info(f"Start resolve local for {expr=}")
+        print(f"Start resolve local for {expr=}")
         name = expr.name
         size = len(self.scopes)
         # loop backward
@@ -61,3 +62,8 @@ class Resolver:
                 logging.info(f"{expr}:{depth=}")
                 return
 
+    def resolve(self, statements: List[Stmt]):
+        try:
+            self.stmt_resolver.resolve_statements(statements)
+        except ResolverError as error:
+            self.resolver_errors.append(error)
