@@ -26,4 +26,7 @@ def interpret_statements(statements: List[Stmt]):
 
 def interpret_source(source: str):
     statements, _ = parse_source(source)
+    interpreter = Interpreter()
+    resolver = Resolver(interpreter)
+    resolver.resolve(statements)
     return interpret_statements(statements)

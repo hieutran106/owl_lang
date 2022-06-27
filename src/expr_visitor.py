@@ -104,7 +104,7 @@ class ExprVisitor(Visitor):
 
     def visit_variable_expr(self, expr: Variable):
         name: Token = expr.name
-        return self.interpreter.get_variable(name)
+        return self.interpreter.lookup_variable(expr)
 
     def visit_assignment_expr(self, expr: Assignment):
         value = self.evaluate(expr.value)

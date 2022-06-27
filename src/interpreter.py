@@ -50,8 +50,15 @@ class Interpreter:
     def assign_variable(self, name: Token, value: Any):
         self.curr_environment.assign(name, value)
 
-    def get_variable(self, name: Token):
-        return self.curr_environment.get(name)
+    # def get_variable(self, name: Token):
+    #     return self.curr_environment.get(name)
+
+    def lookup_variable(self, expr: Variable):
+        distance = self.resolved_local_variables.get(expr)
+        if distance is not None:
+            return self.curr_environment.get_at(distance, expr.name)
+        else:
+            return self.global_environment.get(expr.name)
 
     def define_variable(self, name: str, value: Any):
         """

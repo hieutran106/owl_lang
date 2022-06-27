@@ -28,6 +28,14 @@ class Environment:
     def get(self, name: Token):
         if name.lexeme in self.values:
             return self.values[name.lexeme]
-        if self.enclosing is not None:
-            return self.enclosing.get(name)
+        # if self.enclosing is not None:
+        #     return self.enclosing.get(name)
         raise OwlRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+
+    def get_at(self, distance: int, name: Token):
+        environment = self
+        # walk through a fixed number of hops up the parent chain
+        for i in range(distance):
+            environment = environment.enclosing
+
+        return environment.get(name)
