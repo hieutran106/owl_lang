@@ -57,6 +57,7 @@ class Resolver:
             if name.lexeme in scope:
                 depth = size - 1 - index
                 # store depth between current scope and scope where the variable is defined
+                print(f"Resolve local {expr}: {depth}")
                 self.interpreter.resolve(expr, depth)
                 return
 

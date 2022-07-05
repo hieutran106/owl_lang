@@ -65,6 +65,8 @@ class StmtResolver(Visitor):
         self.resolver.declare(stmt.name)
         self.resolver.define(stmt.name)
 
+        self.resolve_function(stmt)
+
     def resolve_function(self, stmt: FunctionDeclaration) -> None:
         self.resolver.introduce_new_scope()
         # bind parameters to inner function scope

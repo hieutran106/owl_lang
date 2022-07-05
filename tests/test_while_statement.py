@@ -23,3 +23,19 @@ class TestWhileStatement(unittest.TestCase):
         """
         interpreter = interpret_source(source)
         self.assertEqual(interpreter.curr_environment.values['x'], 0)
+
+    def test_while_loop_2(self):
+        source = """
+        var x = 0;
+        {
+            var i = 0;
+            while (i<10) {
+                {
+                    x = i;
+                }
+                i = i + 1;
+            }
+        }
+        """
+        interpreter = interpret_source(source)
+        self.assertEqual(interpreter.curr_environment.values['x'], 9)

@@ -71,7 +71,7 @@ class Scanner:
             self.start = self.current
             self.scan_token()
 
-        eof_token = Token(TokenType.EOF, "", None, self.line)
+        eof_token = Token(TokenType.EOF, "", None, self.line, start_pos=self.current, end_post=self.current)
         self.tokens.append(eof_token)
         return self.tokens
 
@@ -144,7 +144,7 @@ class Scanner:
 
     def add_token(self, token_type: TokenType, literal):
         lexeme = self.source[self.start:self.current]
-        token = Token(token_type, lexeme, literal, self.line)
+        token = Token(token_type, lexeme, literal, self.line, start_pos=self.start, end_post=self.current)
         self.tokens.append(token)
 
     def match(self, expected: str) -> bool:

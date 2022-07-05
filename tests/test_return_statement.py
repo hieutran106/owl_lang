@@ -6,6 +6,7 @@ class TestReturnStatement(unittest.TestCase):
     def test_return_statement_1(self):
         source = """
         fun sum(a, b) {
+            print a;
             return a + b;
         }
         var result = sum(1, 2);

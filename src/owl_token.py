@@ -8,6 +8,9 @@ class Token:
     lexeme: str
     literal: Any
     line: int
+    start_pos: int
+    end_post: int
+
 
 
 if __name__ == "__main__":
